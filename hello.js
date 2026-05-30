@@ -1,3 +1,16 @@
 const db = require("./firebase");
 
-console.log("Firebase connected successfully");
+async function testFirebase() {
+  try {
+    const docRef = await db.collection("test").add({
+      name: "Tanu",
+      createdAt: new Date(),
+    });
+
+    console.log("Document created with ID:", docRef.id);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+testFirebase();
