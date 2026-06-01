@@ -4,12 +4,13 @@ const authMiddleware = require("./Middleware/authMiddleware");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("Hello from Express");
+  res.send("Public Route");
 });
 
-app.get("/profile",authMiddleware,(req, res) => {
-  res.json({
-    message:"Protected Route Accessed",
+app.get("/profile", authMiddleware, (req, res) => {
+  res.status(200).json({
+    message: "Protected Route Accessed",
+    user: req.user,
   });
 });
 
