@@ -1,12 +1,12 @@
-const admin = require("../firebase"); // adjust path if needed
+const admin = require("../firebase");
 
-const authMiddleware = async (req, res, next) => {
+const authMidddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-
     if (!authHeader) {
       return res.status(401).json({
-        message: "No token provided",
+        message: "no token found",
+        code: 401,
       });
     }
 
@@ -14,22 +14,11 @@ const authMiddleware = async (req, res, next) => {
       ? authHeader.split("Bearer ")[1].trim()
       : authHeader.trim();
 
-   console.log("Received Length:", token.length);
-console.log("Parts:", token.split(".").length);
-console.log("Last 20:", token.slice(-20));
-
-    const decodedToken = await admin.auth().verifyIdToken(token);
-
-    console.log("User authenticated:", decodedToken.uid);
-
-    req.user = decodedToken;
-
+    const decodeToken = await admin.auth().verifyIdToken(token);
+    req.user = decodeToken;
     next();
   } catch (error) {
-   
-    console.error("Full Error:", error);
-    
-
+    console.log("Error message", error.message);
     return res.status(401).json({
       success: false,
       message: error.message,
@@ -38,4 +27,4 @@ console.log("Last 20:", token.slice(-20));
   }
 };
 
-module.exports = authMiddleware;
+module.exports = authMidddleware;
