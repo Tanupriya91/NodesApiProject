@@ -73,4 +73,43 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+
+
+router.put("/:id", authMiddleware, async (req,res)=>{
+    try{
+        const noteRef = db.collection("notes").docs(req.params.id);
+
+        const doc = await noteRef.get();
+
+        if(!doc.exists){
+            return res.status(404).json({
+                message: "Note not found",
+            });
+        }
+        const note = doc.data();
+
+
+        if(note.userId !== req.user.uid){
+            return res.status(403).json({
+                message: "Forbidden",
+            });
+        }
+        await noteRef.update({
+            title: req.body.title,
+            content: req.body.content,
+        });
+        res.json({
+            success: true,
+            message:"updated successfully",
+        });
+    }
+    catch(error){
+        res.status(500).json({
+            message: error.message,
+        });
+
+    }
+});
+
+
 module.exports = router;
