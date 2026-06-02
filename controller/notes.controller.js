@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const db = require("../firebase");
+const {db} = require("../firebase");
 const authMiddleware = require("../middleware/authMiddleware");
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
+    console.log("data", req.body);
     const { title, content } = req.body;
 
     const noteRef = await db.collection("notes").add({
@@ -18,7 +19,9 @@ router.post("/", authMiddleware, async (req, res) => {
       success: true,
       noteId: noteRef.id,
     });
-  } catch (error) {
+  } 
+  
+  catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
