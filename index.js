@@ -6,6 +6,10 @@ const app = express();
 app.use(express.json());
 
 // const notesRoutes = require("./routes/notes");
+const notesRoutes = require("./controller/notes.controller");
+
+app.use("/notes", notesRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Public Route");

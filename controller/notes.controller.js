@@ -33,7 +33,7 @@ router.get("/", authMiddleware, async (req, res) => {
       .where("userId", "==", req.user.uid)
       .get();
 
-    const notes = snapshot.docs.map((docs) => ({
+    const notes = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
@@ -47,9 +47,9 @@ router.get("/", authMiddleware, async (req, res) => {
 
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const doc = await db.colllection("notes").doc(req.params.id).get();
+    const doc = await db.collection("notes").doc(req.params.id).get();
 
-    if(!docs.exists){
+    if(!doc.exists){
         return res.status(404).json({
             message:"Notes noty found",
         });
@@ -77,7 +77,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
 
 router.put("/:id", authMiddleware, async (req,res)=>{
     try{
-        const noteRef = db.collection("notes").docs(req.params.id);
+        const noteRef = db.collection("notes").doc(req.params.id);
 
         const doc = await noteRef.get();
 
@@ -110,6 +110,43 @@ router.put("/:id", authMiddleware, async (req,res)=>{
 
     }
 });
+
+
+
+router.delete("/:id", authMiddleware, async(req,res) =>{
+    try{
+        const noteRef = db.collection("notes").doc(req.params.id);
+
+        const doc = await noteRef.get();
+
+        if(!doc.exists){
+            return res.status(404).json({
+                message: "Notes not found",
+            });
+        }
+        const note = doc.data();
+
+        if(note.userId !== req.user.uid){
+            return res.status(403).json({
+                message: "Forbidden",
+            });
+        }
+        await noteRef.delete();
+
+        res.json({
+            success: true,
+            message: "deleted successfully",
+        });
+
+    }
+    catch(error){
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+
+
 
 
 module.exports = router;
