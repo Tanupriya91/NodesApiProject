@@ -54,7 +54,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
 
     if(!doc.exists){
         return res.status(404).json({
-            message:"Notes noty found",
+            message:"Notes not found",
         });
     }
     const note = doc.data();
